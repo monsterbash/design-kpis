@@ -8,4 +8,8 @@ A team dashboard for tracking individual and team design KPIs.
 
 ## Getting Started
 
-_Coming soon._
+This project is built with Cursor. To contribute:
+
+1. Clone the repo: `git clone https://github.com/monsterbash/design-kpis.git`
+2. Open the folder in Cursor
+3. Create a branch, make changes, and open a pull request
