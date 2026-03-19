@@ -1,0 +1,42 @@
+{
+  "users": [
+    {
+      "name": "User One",
+      "email": "user1@example.com",
+      "password": "changeme123",
+      "role": "Product Designer"
+    },
+    {
+      "name": "User Two",
+      "email": "user2@example.com",
+      "password": "changeme123",
+      "role": "Service Designer"
+    }
+  ],
+  "metrics": [
+    {
+      "name": "Example Score Metric",
+      "shortDescription": "A short tooltip description of this metric.",
+      "fullDescription": "A longer description explaining what this metric measures, how it is collected, and what a good score looks like.",
+      "ownerEmail": "user1@example.com",
+      "cadence": "Monthly",
+      "target": "Higher is better (→ 10)",
+      "fieldTemplate": "score-1-10"
+    },
+    {
+      "name": "Example Yes/No Metric",
+      "shortDescription": "Tracks whether something was adopted or used.",
+      "fullDescription": "A longer description explaining the adoption metric and how entries are recorded.",
+      "ownerEmail": "user2@example.com",
+      "cadence": "Twice per quarter",
+      "target": "100%",
+      "fieldTemplate": "yes-no"
+    }
+  ],
+  "_fieldTemplates": {
+    "score-1-10": "Decimal score from 1 to 10, displayed as an average",
+    "score-1-5": "Decimal score from 1 to 5, displayed as an average",
+    "yes-no": "Yes/No radio, displayed as a percentage of Yes responses",
+    "yes-somewhat-no": "Tally of Yes/Somewhat/No responses, displayed as a computed average (Yes=3, Somewhat=2, No=1)"
+  }
+}

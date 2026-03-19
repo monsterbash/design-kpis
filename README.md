@@ -1,15 +1,61 @@
 # Design KPIs
 
-A team dashboard for tracking individual and team design KPIs.
-
-## Status
-
-🚧 Under construction — this project is an end-to-end test of the design-to-production workflow using Cursor.
+A lightweight team dashboard for tracking individual and team design KPIs.
 
 ## Getting Started
 
-This project is built with Cursor. To contribute:
+### 1. Install dependencies
 
-1. Clone the repo: `git clone https://github.com/monsterbash/design-kpis.git`
-2. Open the folder in Cursor
-3. Create a branch, make changes, and open a pull request
+```bash
+npm install
+```
+
+### 2. Set up seed data (local development)
+
+```bash
+cp seed-data.example.json seed-data.json
+```
+
+Edit `seed-data.json` with your team's users and metrics. See `seed-data.example.json` for the expected format and available field templates.
+
+### 3. Initialize and seed the database
+
+```bash
+npx drizzle-kit generate
+npx tsx src/lib/seed.ts
+```
+
+### 4. Start the dev server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Production (Turso)
+
+For production, the app uses [Turso](https://turso.tech) as a hosted SQLite database.
+
+Set the following environment variables:
+
+```
+TURSO_DATABASE_URL=libsql://your-db-name.turso.io
+TURSO_AUTH_TOKEN=your-auth-token
+```
+
+Push the schema to the remote database:
+
+```bash
+npm run db:push
+```
+
+No seed script is needed in production — create accounts and metrics through the app UI.
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Styling:** Tailwind CSS
+- **Database:** SQLite (local) / Turso (production) via Drizzle ORM
+- **Auth:** NextAuth.js v5
+- **Font:** Inclusive Sans
