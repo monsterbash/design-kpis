@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { archiveUser } from "@/lib/actions";
 
-export default function AccountPage() {
+export default function AccountSettings() {
   const { data: session } = useSession();
   const router = useRouter();
   const [confirmArchive, setConfirmArchive] = useState(false);
@@ -18,11 +18,10 @@ export default function AccountPage() {
   const user = session.user;
 
   return (
-    <main className="mx-auto w-full max-w-lg px-6 py-12">
-      <h1 className="text-2xl font-bold text-text-primary">Account</h1>
-
-      <div className="mt-8 rounded-xl border border-border bg-surface p-6">
-        <div className="space-y-4">
+    <>
+      <div className="rounded-xl border border-border bg-surface p-6">
+        <h2 className="text-base font-semibold text-text-primary">Account</h2>
+        <div className="mt-4 space-y-4">
           <div>
             <span className="text-xs font-medium uppercase tracking-wider text-text-muted">
               Name
@@ -46,7 +45,7 @@ export default function AccountPage() {
         </div>
       </div>
 
-      <div className="mt-8 rounded-xl border border-coral-200 bg-coral-100 p-6">
+      <div className="rounded-xl border border-coral-200 bg-coral-100 p-6">
         <h2 className="text-base font-semibold text-text-primary">
           Archive account
         </h2>
@@ -81,6 +80,6 @@ export default function AccountPage() {
           </div>
         )}
       </div>
-    </main>
+    </>
   );
 }

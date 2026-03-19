@@ -25,7 +25,7 @@ export default function NavBar() {
           {session?.user ? (
             <>
               <Link
-                href="/account"
+                href="/settings"
                 className="text-navy-200 transition-colors hover:text-white"
               >
                 {session.user.name}

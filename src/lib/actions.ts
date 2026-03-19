@@ -1,13 +1,18 @@
 "use server";
 
 import { db } from "./db";
-import { users, metrics, entries } from "./schema";
+import { users, metrics, entries, siteSettings } from "./schema";
 import { eq } from "drizzle-orm";
-import { hashSync } from "bcryptjs";
+import { hashSync, compareSync } from "bcryptjs";
 import { auth, signIn, signOut } from "./auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTemplateById } from "./field-templates";
+import {
+  ensureSiteSettingsRow,
+  setSiteAccessCookie,
+  clearSiteAccessCookie,
+} from "./site-protection";
 
 export async function signup(formData: FormData) {
   const name = formData.get("name") as string;
@@ -185,4 +190,62 @@ export async function createMetric(formData: FormData) {
 
   revalidatePath("/");
   redirect("/");
+}
+
+// ── Site protection actions ──────────────────────────────────
+
+export async function verifySitePassword(formData: FormData) {
+  const password = formData.get("password") as string;
+  if (!password) return { error: "Password is required" };
+
+  const settings = await ensureSiteSettingsRow();
+  if (!settings.siteProtectionEnabled || !settings.sitePasswordHash) {
+    return { error: "Site protection is not enabled" };
+  }
+
+  if (!compareSync(password, settings.sitePasswordHash)) {
+    return { error: "Incorrect password" };
+  }
+
+  await setSiteAccessCookie(settings.passwordVersion);
+  revalidatePath("/");
+  return { success: true };
+}
+
+export async function updateSiteProtection(formData: FormData) {
+  const session = await auth();
+  if (!session?.user) return { error: "Not authenticated" };
+
+  const enabled = formData.get("enabled") === "true";
+  const newPassword = formData.get("password") as string | null;
+
+  const settings = await ensureSiteSettingsRow();
+
+  if (enabled && !settings.sitePasswordHash && !newPassword) {
+    return { error: "You must set a password before enabling site protection" };
+  }
+
+  const updates: Record<string, unknown> = {
+    siteProtectionEnabled: enabled,
+    updatedAt: new Date().toISOString(),
+  };
+
+  if (newPassword && newPassword.length > 0) {
+    updates.sitePasswordHash = hashSync(newPassword, 10);
+    updates.passwordVersion = settings.passwordVersion + 1;
+  }
+
+  await db
+    .update(siteSettings)
+    .set(updates)
+    .where(eq(siteSettings.id, settings.id));
+
+  if (!enabled) {
+    await clearSiteAccessCookie();
+  } else if (updates.passwordVersion) {
+    await setSiteAccessCookie(updates.passwordVersion as number);
+  }
+
+  revalidatePath("/settings");
+  return { success: true };
 }

@@ -56,6 +56,20 @@ export const entries = sqliteTable("entries", {
     .$defaultFn(() => new Date().toISOString()),
 });
 
+export const siteSettings = sqliteTable("site_settings", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  siteProtectionEnabled: integer("site_protection_enabled", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  sitePasswordHash: text("site_password_hash"),
+  passwordVersion: integer("password_version").notNull().default(0),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+});
+
+export type SiteSettings = typeof siteSettings.$inferSelect;
+
 export type FieldDefinition = {
   name: string;
   type: "decimal" | "integer" | "radio";
